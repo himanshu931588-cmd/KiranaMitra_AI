@@ -138,18 +138,22 @@ def seed_data(conn):
                 s["product_id"], s["day_1"], s["day_2"], s["day_3"], s["day_4"], s["day_5"], s["day_6"], s["day_7"]
             ))
 
-        # Seed initial purchase list from low stock items
+        # Seed initial purchase list from all low-stock items so the data file drives reorder suggestions
         cursor.execute("SELECT * FROM products WHERE stock <= min_threshold")
         low_stock_products = cursor.fetchall()
         for p in low_stock_products:
-            # Add initial sample items to purchase list
-            if p["name"] in ["Maggi 2-Min Noodles", "Sugar (Chini)"]:
-                rec_qty = 30.0 if p["unit"] == "packets" else 10.0
-                est_cost = rec_qty * p["cost_price"]
-                cursor.execute("""
-                    INSERT INTO purchase_list (product_id, product_name, quantity, unit, estimated_cost, supplier, urgency, added_by)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (p["id"], p["name"], rec_qty, p["unit"], est_cost, p["supplier"], "HIGH", "AI Demand Engine"))
+            deficit = max(0.0, float(p["min_threshold"]) - float(p["stock"]))
+            base_order = max(10.0, deficit * 2.0)
+            if p["unit"] in ["kg", "bags", "cartons", "crates", "pouches"]:
+                rec_qty = max(base_order, 5.0)
+            else:
+                rec_qty = max(base_order, 8.0)
+
+            est_cost = rec_qty * float(p["cost_price"])
+            cursor.execute("""
+                INSERT INTO purchase_list (product_id, product_name, quantity, unit, estimated_cost, supplier, urgency, added_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (p["id"], p["name"], rec_qty, p["unit"], est_cost, p["supplier"], "HIGH", "AI Demand Engine"))
 
         conn.commit()
 
