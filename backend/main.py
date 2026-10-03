@@ -13,6 +13,7 @@ from ai_agent import (
     run_kirana_agent_pipeline, tool_simulate_what_if, tool_compare_suppliers,
     tool_get_sales_history, tool_predict_demand
 )
+from public_api import fetch_public_products
 from speech import process_audio_speech
 
 app = FastAPI(
@@ -142,6 +143,11 @@ def compare_suppliers_endpoint(product_id: int):
     if not item:
         raise HTTPException(status_code=404, detail="Product not found")
     return tool_compare_suppliers(item["name"])
+
+@app.get("/api/public/products")
+def get_public_products(limit: int = 10):
+    """Return a small list of public catalog products from a free public API."""
+    return fetch_public_products(limit)
 
 # 3. PURCHASE LIST ENDPOINTS
 @app.get("/api/purchase-list")

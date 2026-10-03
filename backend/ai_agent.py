@@ -79,7 +79,8 @@ def tool_add_purchase_list(product_name: str, quantity: float, unit: str = None)
     p = find_product_by_keyword(product_name)
     if not p:
         return {"error": f"Product '{product_name}' not found."}
-    
+
+    quantity = sanitize_quantity(quantity, default=1.0)
     unit_final = unit or p["unit"]
     cost_price = p["cost_price"]
     est_cost = float(quantity * cost_price)
@@ -123,6 +124,7 @@ def tool_update_inventory(product_name: str, quantity: float, type_action: str =
     if not p:
         return {"error": f"Product '{product_name}' not found."}
 
+    quantity = sanitize_quantity(quantity, default=1.0)
     delta = float(quantity) if type_action.lower() in ["received", "add", "+", "aaya", "aaye"] else -float(quantity)
     updated_p = update_product_stock(p["id"], delta, mode="delta")
 
@@ -262,13 +264,33 @@ HINDI_NUMBERS = {
     "sau": 100, "so": 100, "100": 100
 }
 
+def sanitize_quantity(value, default=10.0):
+    """Return a strictly positive numeric quantity or the safe fallback."""
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+
+    if not math.isfinite(parsed) or parsed <= 0:
+        return float(default)
+    return parsed
+
+
 def parse_hinglish_number(text: str, default=10):
-    for word in text.split():
-        clean_w = word.lower().strip()
-        if clean_w.isdigit():
-            return float(clean_w)
+    for word in str(text).split():
+        clean_w = word.lower().strip().strip(",;.!?()[]{}")
+        if not clean_w:
+            continue
+
         if clean_w in HINDI_NUMBERS:
-            return float(HINDI_NUMBERS[clean_w])
+            return sanitize_quantity(HINDI_NUMBERS[clean_w], default)
+
+        try:
+            value = float(clean_w)
+        except ValueError:
+            continue
+
+        return sanitize_quantity(value, default)
     return float(default)
 
 
