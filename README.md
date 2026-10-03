@@ -1,4 +1,5 @@
 # 🏪 KiranaMitra AI — Open-Source Shopkeeper Assistant
+### Grounded, Voice-First Inventory & Margin Co-Pilot for Indian Kirana Stores
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
