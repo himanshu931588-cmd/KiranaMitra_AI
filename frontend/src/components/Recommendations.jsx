@@ -34,23 +34,19 @@ export default function Recommendations({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {recommendations.map((rec) => {
           const isHigh = rec.urgency === 'HIGH';
-          
+
           return (
             <div
               key={rec.product_id}
-              className={`p-4 rounded-xl border transition-all ${
-                isHigh 
-                  ? 'bg-gradient-to-r from-red-500/10 via-gray-900 to-gray-900 border-red-500/40'
-                  : 'bg-gray-900/60 border-gray-800'
-              }`}
+              className={`recommendation-card ${isHigh ? 'recommendation-card--high' : 'recommendation-card--normal'}`}
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-gray-100 flex items-center gap-2">
+              <div className="recommendation-header">
+                <div className="recommendation-title-wrap">
+                  <h3 className="recommendation-title">
                     {rec.product_name}
-                    <span className="text-xs font-medium text-amber-400">({rec.hindi_name})</span>
+                    <span className="recommendation-hindi">({rec.hindi_name})</span>
                   </h3>
-                  <p className="text-xs text-gray-400 mt-0.5">Supplier: {rec.supplier}</p>
+                  <p className="recommendation-supplier">Supplier: {rec.supplier}</p>
                 </div>
 
                 {isHigh ? (
@@ -64,74 +60,69 @@ export default function Recommendations({
                 )}
               </div>
 
-              {/* Stock vs Expected Demand Bars ("Dukaan Ka Dimaag" Visual Story) */}
-              <div className="mt-4 bg-gray-950 p-3.5 rounded-xl border border-gray-800">
-                
-                {/* Current Stock Line */}
-                <div className="mb-3">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-400">Current Stock:</span>
-                    <span className="font-bold text-amber-400">{rec.current_stock} {rec.unit}</span>
+              <div className="recommendation-stats">
+                <div className="recommendation-metric">
+                  <div className="recommendation-metric-label-row">
+                    <span>Current Stock:</span>
+                    <span className="recommendation-metric-value accent-amber">{rec.current_stock} {rec.unit}</span>
                   </div>
-                  <div className="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                  <div className="recommendation-bar-track">
                     <div
-                      className="bg-amber-500 h-full rounded-full transition-all"
+                      className="recommendation-bar recommendation-bar-amber"
                       style={{ width: `${Math.min(100, (rec.current_stock / (rec.avg_daily_sales * 5)) * 100)}%` }}
                     ></div>
                   </div>
                 </div>
 
-                {/* Expected Demand Line */}
-                <div className="mb-2">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-400 flex items-center gap-1">
+                <div className="recommendation-metric">
+                  <div className="recommendation-metric-label-row">
+                    <span className="recommendation-meta-inline">
                       <TrendingUp className="w-3.5 h-3.5 text-red-400" /> Expected 3-Day Demand:
                     </span>
-                    <span className="font-bold text-red-400">{round1(rec.avg_daily_sales * 3 * 1.28)} {rec.unit}</span>
+                    <span className="recommendation-metric-value accent-red">{round1(rec.avg_daily_sales * 3 * 1.28)} {rec.unit}</span>
                   </div>
-                  <div className="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                  <div className="recommendation-bar-track">
                     <div
-                      className="bg-red-500 h-full rounded-full transition-all"
+                      className="recommendation-bar recommendation-bar-red"
                       style={{ width: `${Math.min(100, ((rec.avg_daily_sales * 3 * 1.28) / (rec.avg_daily_sales * 5)) * 100)}%` }}
                     ></div>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-gray-400 mt-2 pt-2 border-t border-gray-800/80 flex items-center justify-between">
-                  <span>Avg Daily Sales: <strong className="text-gray-200">{rec.avg_daily_sales} {rec.unit}/day</strong></span>
-                  <span>Stock Runway: <strong className="text-red-400">~{rec.days_remaining} days left</strong></span>
+                <div className="recommendation-summary-row">
+                  <span>Avg Daily Sales: <strong>{rec.avg_daily_sales} {rec.unit}/day</strong></span>
+                  <span>Stock Runway: <strong className="accent-red">~{rec.days_remaining} days left</strong></span>
                 </div>
               </div>
 
-              {/* AI Recommendation Banner */}
-              <div className="mt-3 bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
+              <div className="recommendation-order-box">
                 <div>
-                  <span className="text-xs text-amber-400 font-semibold block">AI Recommended Purchase:</span>
-                  <span className="text-base font-extrabold text-amber-300">
-                    Buy {rec.recommended_order} {rec.unit} <span className="text-xs font-normal text-gray-400">(Est. ₹{rec.estimated_cost})</span>
+                  <span className="recommendation-order-label">AI Recommended Purchase:</span>
+                  <span className="recommendation-order-total">
+                    Buy {rec.recommended_order} {rec.unit}
+                    <span className="recommendation-order-cost">(Est. ₹{rec.estimated_cost})</span>
                   </span>
                 </div>
 
                 <button
                   onClick={() => onAddPurchaseItem(rec.product_id, rec.recommended_order, rec.unit)}
-                  className="bg-amber-500 hover:bg-amber-400 text-gray-950 font-extrabold text-xs px-3 py-2 rounded-lg flex items-center gap-1 transition-all shadow-md shadow-amber-500/20 cursor-pointer"
+                  className="recommendation-order-btn"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" /> Order Now
                 </button>
               </div>
 
-              {/* Differentiator Buttons: "Why?" & "Supplier Compare" */}
-              <div className="mt-3 flex items-center justify-between gap-2 pt-2">
+              <div className="recommendation-actions">
                 <button
                   onClick={() => onExplainOrder(rec.product_id)}
-                  className="text-xs text-amber-400 hover:text-amber-300 bg-gray-950 hover:bg-gray-800 px-3 py-1.5 rounded-lg border border-amber-500/30 flex items-center gap-1.5 transition-all cursor-pointer font-medium"
+                  className="recommendation-action-btn recommendation-action-btn--primary"
                 >
-                  <HelpCircle className="w-3.5 h-3.5" /> 🧠 "Why am I buying this?" (Explain AI)
+                  <HelpCircle className="w-3.5 h-3.5" /> Why this order?
                 </button>
 
                 <button
                   onClick={() => onCompareSuppliers(rec.product_id)}
-                  className="text-xs text-gray-400 hover:text-gray-200 bg-gray-950 hover:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-800 flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="recommendation-action-btn recommendation-action-btn--secondary"
                 >
                   <Truck className="w-3.5 h-3.5" /> Compare Suppliers
                 </button>
