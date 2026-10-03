@@ -17,6 +17,8 @@ export default function App() {
   const [purchaseList, setPurchaseList] = useState({ items: [], total_cost: 0, item_count: 0 });
   const [agentResult, setAgentResult] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
 
   // Modals state
@@ -31,6 +33,9 @@ export default function App() {
   }, []);
 
   const fetchAllData = async () => {
+    setIsLoading(true);
+    setFetchError(null);
+
     try {
       const [resInv, resRec, resPur] = await Promise.all([
         fetch(`${API_BASE}/inventory`).then(r => r.json()),
@@ -43,6 +48,9 @@ export default function App() {
       setPurchaseList(resPur || { items: [], total_cost: 0, item_count: 0 });
     } catch (err) {
       console.error('API Fetch Error:', err);
+      setFetchError('Unable to load shop data right now. Please retry in a moment.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -207,6 +215,8 @@ export default function App() {
                 onExplainOrder={handleExplainOrder}
                 onCompareSuppliers={handleCompareSuppliers}
                 onAddPurchaseItem={handleAddPurchaseItem}
+                fetchError={fetchError}
+                isLoading={isLoading}
               />
             </div>
 
@@ -231,6 +241,8 @@ export default function App() {
               onExplainOrder={handleExplainOrder}
               onCompareSuppliers={handleCompareSuppliers}
               onAddPurchaseItem={handleAddPurchaseItem}
+              fetchError={fetchError}
+              isLoading={isLoading}
             />
           </div>
         )}
