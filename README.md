@@ -103,6 +103,20 @@ KiranaMitra AI relies strictly on open-weight AI models to ensure vendor neutral
 
 ---
 
+## ⚔️ Competitive Advantage: How KiranaMitra Differs
+
+Traditional retail tools force shopkeepers into tedious manual data entry, while generic LLMs hallucinate numbers and cost too much to run. KiranaMitra bridges this gap with deterministic inventory math powered by lightweight open-weight intelligence.
+
+| Dimension | Legacy Apps (Vyapar, Khatabook) | Generic Closed LLMs (ChatGPT, Claude) | KiranaMitra AI (Our Solution) |
+| :--- | :--- | :--- | :--- |
+| **Input Barrier** | High — requires complex forms, barcodes, and manual typing | Medium — requires prompt typing or rigid voice transcription | **Zero** — hands-free code-switched Hinglish voice understanding |
+| **Recurring Cost** | Monthly subscription fees (₹2,000–₹5,000/yr) | Costly per-token API bills; unsustainable at scale | **₹0 recurring** — 100% open-weight, runs on cheap local hardware |
+| **Math & Inventory Logic** | Rigid rule-based tracking; zero predictive foresight | Prone to numeric hallucinations and unsafe order estimates | **Explainable AI (XAI)** — deterministic math validated by DeepSeek-R1 CoT |
+| **Data Privacy** | Stored on third-party cloud servers | Sent to proprietary US-hosted LLM endpoints | **100% On-Premise** — distributor pricing and sales records stay in-store |
+| **Decision Support** | Simple static alerts ("Item low") | Generic advice without live stock context | **Actionable Trade-offs** — price elasticity & dead-stock capital lockup simulator |
+
+---
+
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
