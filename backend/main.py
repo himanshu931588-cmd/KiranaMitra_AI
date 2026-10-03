@@ -168,6 +168,9 @@ def get_purchase_list():
 
 @app.post("/api/purchase-list/add")
 def add_purchase_item(req: PurchaseItemRequest):
+    if req.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Quantity must be a positive number")
+
     item = get_product_by_id(req.product_id)
     if not item:
         raise HTTPException(status_code=404, detail="Product not found")
