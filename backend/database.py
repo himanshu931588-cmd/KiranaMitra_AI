@@ -58,7 +58,7 @@ def init_db(force_reseed=False):
         FOREIGN KEY (product_id) REFERENCES products (id)
     )
     """)
-
+//json
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS purchase_list (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
